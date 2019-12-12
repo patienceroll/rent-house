@@ -1,6 +1,6 @@
 import React from 'react';
 import Home from './pages/Home';
-import Citys from './pages/Citys';
+import Citys from './pages/CityList/Citys';
 import { BrowserRouter as Router, Link, Route } from 'react-router-dom'
 
 const App = (props) => {
