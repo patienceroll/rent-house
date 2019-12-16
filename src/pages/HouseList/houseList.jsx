@@ -66,12 +66,12 @@ class Navgation extends React.Component {
     navList: [
       { src: NavImage1, id: 1, url: '/home/list', name: '整租' },
       { src: NavImage2, id: 2, url: '/home/list', name: '合租' },
-      { src: NavImage3, id: 3, url: '/home/map', name: '地图找房' },
+      { src: NavImage3, id: 3, url: '/maps', name: '地图找房' },
       { src: NavImage4, id: 4, url: '/home/rent', name: '去出租' }
     ]
   }
   jumpTo(url) {
-    console.log(this.props, url)
+    this.props.history.push(url);
   }
   renderNavList() {
     return this.state.navList.map(item =>
@@ -176,16 +176,38 @@ class LatestNews extends React.Component {
 }
 
 class HouseList extends React.Component {
+  state = {
+    cityName: '定位中...'
+  }
+  getCityLabel() {
+    if (window.BMap) {
+      const localCity = new window.BMap.LocalCity();
+      localCity.get(async ({ name }) => {
+        const { body } = await (await (await fetch(`http://127.0.0.1:8080/area/info?name=${name}`)).json())
+        console.log('body',body);
+        this.setState({
+          cityName: body.label
+        })
+      })
+
+    }
+    else {
+      alert('定位信息获取失败')
+    }
+  }
+  componentDidMount(){
+    this.getCityLabel()
+  }
   render() {
     return <div>
       <Swiper></Swiper>
-      <Navgation></Navgation>
+      <Navgation {...this.props}></Navgation>
       <GroupList></GroupList>
       <LatestNews></LatestNews>
       <Flex className='search-box'>
         <Flex className="search">
           <div className="location" >
-            <span className="name">长沙</span>
+            <span className="name">{this.state.cityName}</span>
             <i className="iconfont icon-arrow" />
           </div>
           <div className="form">

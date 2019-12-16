@@ -1,0 +1,10 @@
+
+.map-find-house{
+    height: 100%;
+    .am-navbar{
+        background-color: #ddd;
+    }
+    #map-container{
+        height: calc(100vh - 45px);
+    }
+}
