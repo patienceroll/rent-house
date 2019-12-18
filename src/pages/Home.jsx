@@ -15,7 +15,7 @@ import Profile from './Profile/profile'
 // tab栏组件数据
 const tabPages = [
   { path: '/home/index', component: HouseList, icon: 'ind', name: '首页' },
-  { path: '/home/list', component: Citys, icon: 'findHouse', name: '找房' },
+  { path: '/cityList', component: Citys, icon: 'findHouse', name: '找房' },
   { path: '/home/news', component: News, icon: 'infom', name: '资讯' },
   { path: '/home/profile', component: Profile, icon: 'my', name: '我的' }
 ]

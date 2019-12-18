@@ -8,6 +8,8 @@ import NavImage4 from '../../assets/images/nav-4.png';
 
 import './houseList.scss';
 
+import getCurrentCity from '../../utils/tools'
+
 
 // 轮播图组件
 class Swiper extends React.Component {
@@ -179,24 +181,17 @@ class HouseList extends React.Component {
   state = {
     cityName: '定位中...'
   }
-  getCityLabel() {
-    if (window.BMap) {
-      const localCity = new window.BMap.LocalCity();
-      localCity.get(async ({ name }) => {
-        const { body } = await (await (await fetch(`http://127.0.0.1:8080/area/info?name=${name}`)).json())
-        console.log('body',body);
-        this.setState({
-          cityName: body.label
-        })
-      })
 
-    }
-    else {
-      alert('定位信息获取失败')
-    }
+  chooseCity() {
+    this.props.history.push('/cityList');
   }
-  componentDidMount(){
-    this.getCityLabel()
+
+  componentDidMount() {
+    getCurrentCity()
+      .then((res) => this.setState({
+        cityName: res.label
+      }))
+
   }
   render() {
     return <div>
@@ -207,7 +202,7 @@ class HouseList extends React.Component {
       <Flex className='search-box'>
         <Flex className="search">
           <div className="location" >
-            <span className="name">{this.state.cityName}</span>
+            <span className="name" onClick={this.chooseCity.bind(this)}>{this.state.cityName}</span>
             <i className="iconfont icon-arrow" />
           </div>
           <div className="form">
@@ -215,7 +210,7 @@ class HouseList extends React.Component {
             <span className="text">请输入小区或地址</span>
           </div>
         </Flex>
-        <i className="iconfont icon-map" />
+        <i className="iconfont icon-map" onClick={() => this.props.history.push('/maps')} />
       </Flex>
     </div>
 
