@@ -5,7 +5,7 @@ import '../assets/fonts/iconfont.css';
 
 import { TabBar} from 'antd-mobile';
 import News from './News/news';
-import Citys from './CityList/citys'
+import FindHouse from './FindHouse/findHouse'
 import HouseList from './HouseList/houseList'
 import Profile from './Profile/profile'
 // import { } from '../components/myComponent.js'
@@ -15,7 +15,7 @@ import Profile from './Profile/profile'
 // tab栏组件数据
 const tabPages = [
   { path: '/home/index', component: HouseList, icon: 'ind', name: '首页' },
-  { path: '/cityList', component: Citys, icon: 'findHouse', name: '找房' },
+  { path: '/home/findHouse', component: FindHouse, icon: 'findHouse', name: '找房' },
   { path: '/home/news', component: News, icon: 'infom', name: '资讯' },
   { path: '/home/profile', component: Profile, icon: 'my', name: '我的' }
 ]

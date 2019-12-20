@@ -1,10 +1,11 @@
 import React from 'react';
 
 import { List as LongList, AutoSizer } from 'react-virtualized'
-import { NavBar, Icon , Toast} from 'antd-mobile';
+import {  Toast } from 'antd-mobile';
 import './citys.scss';
 
 import getCurrentCity from '../../utils/tools';
+import NavgationBar from '../../components/navigationBar';
 
 // 索引的高度
 const TITLE_HEIGHT = 36
@@ -61,7 +62,7 @@ class Citys extends React.Component {
   renderCityIndex() {
     return this.state.cityIndex.map((item, index) => {
       return (
-        <li className="city-index-item" key={item} onClick={() => { this.longListComponent.current.scrollToRow(index); }}>
+        <li className="city-index-item" key={item} onClick={() => {this.longListComponent.current.scrollToRow(index);}}>
           <span className={this.state.activeIndex == index ? 'index-active' : ''} > {item == 'hot' ? '热' : item.toUpperCase()}</span>
         </li>
       )
@@ -70,15 +71,15 @@ class Citys extends React.Component {
 
 
   chooseCity(label, value) {
-    const {combineCityList} = this.state;
+    const { combineCityList } = this.state;
     let flag = combineCityList['hot'].find(item => item.label === label);
     if (flag) {
       value = flag.value;
-      localStorage.setItem('localCity', JSON.stringify({label,value}));
+      localStorage.setItem('localCity', JSON.stringify({ label, value }));
       this.props.history.push('/home/index');
     }
-    else{
-      Toast.info('当前城市没有房源',1.5)
+    else {
+      Toast.info('当前城市没有房源', 1.5)
     }
   }
 
@@ -109,8 +110,8 @@ class Citys extends React.Component {
   render() {
     return (
       <div className='city-list'>
-        <NavBar mode="light" icon={<Icon type="left" />} onLeftClick={() => { this.props.history.go(-1) }} >选择城市</NavBar>
-
+        {/* <NavBar mode="light" icon={<Icon type="left" />} onLeftClick={() => { this.props.history.go(-1) }} >选择城市</NavBar> */}
+        <NavgationBar>选择城市</NavgationBar>
         <AutoSizer>
           {({ height, width }) => {
             const { combineCityList, cityIndex } = this.state;
