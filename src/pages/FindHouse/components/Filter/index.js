@@ -4,7 +4,7 @@ import FilterTitle from '../FilterTitle'
 import FilterPicker from '../FilterPicker'
 import FilterMore from '../FilterMore'
 
-// 导入自定义的axios
+
 import  {API}  from '../../../../utils/api.js'
 import getCurrentCity from '../../../../utils/tools'
 

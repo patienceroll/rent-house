@@ -7,7 +7,7 @@ import { TabBar} from 'antd-mobile';
 import News from './News/news';
 import FindHouse from './FindHouse/findHouse'
 import HouseList from './HouseList/houseList'
-import Profile from './Profile/profile'
+import Profile from './Profile/index'
 // import { } from '../components/myComponent.js'
 
 
