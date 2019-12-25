@@ -8,7 +8,7 @@ import NavImage4 from '../../assets/images/nav-4.png';
 
 import './houseList.scss';
 
-import getCurrentCity from '../../utils/tools'
+import {getCurrentCity} from '../../utils/index'
 
 
 // 轮播图组件

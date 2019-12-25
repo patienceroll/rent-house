@@ -1,2 +1,4 @@
-const BASE_URL = process.env.REACT_APP_URL;
-export default BASE_URL;
+/**
+ * 全局接口 URL 域名。
+ */
+export const BASE_URL = process.env.REACT_APP_URL;

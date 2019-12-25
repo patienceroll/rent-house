@@ -6,7 +6,7 @@ import NavigationBar from '../../components/navigationBar'
 import HouseItem from '../../components/HouseItem'
 import HousePackage from '../../components/HousePackage'
 
-import  BASE_URL  from '../../utils/url'
+import  {BASE_URL}  from '../../utils/url'
 import  {API}  from '../../utils/api'
 
 import styles from './index.module.css'

@@ -4,7 +4,7 @@ import { List as LongList, AutoSizer } from 'react-virtualized'
 import {  Toast } from 'antd-mobile';
 import './citys.scss';
 
-import getCurrentCity from '../../utils/tools';
+import {getCurrentCity} from '../../utils/index';
 import NavgationBar from '../../components/navigationBar';
 
 // 索引的高度

@@ -4,7 +4,7 @@ import { API } from '../../utils/api';
 import { Link } from 'react-router-dom';
 
 import NavgationBar from '../../components/navigationBar';
-import getCurrentCity from '../../utils/tools';
+import {getCurrentCity} from '../../utils/index';
 import { Toast } from 'antd-mobile';
 
 import style from './maps.module.css';

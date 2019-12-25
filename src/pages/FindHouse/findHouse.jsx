@@ -1,7 +1,7 @@
 import React from 'react';
 
 import { Flex } from "antd-mobile";
-import getCurrentCity from "../../utils/tools";
+import {getCurrentCity} from "../../utils/index";
 
 import SearchNavBar from '../../components/searchComponent';
 import Filter from './components/Filter/index';

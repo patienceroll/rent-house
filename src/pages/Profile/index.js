@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom'
 import { Grid, Button } from 'antd-mobile'
 
 import { API } from '../../utils/api'
-import BASE_URL  from '../../utils/url'
+import {BASE_URL}  from '../../utils/url'
 
 import styles from './index.module.css'
 

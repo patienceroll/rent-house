@@ -1,157 +1,198 @@
-import React, { Component } from 'react'
+import React, { Component } from 'react';
+
+
+import { API, getCurrentCity } from '../../../../utils'
 
 import FilterTitle from '../FilterTitle'
 import FilterPicker from '../FilterPicker'
 import FilterMore from '../FilterMore'
 
-
-import  {API}  from '../../../../utils/api.js'
-import getCurrentCity from '../../../../utils/tools'
-
 import styles from './index.module.css'
 
-// 标题高亮状态
-// true 表示高亮； false 表示不高亮
-const titleSelectedStatus = {
-  area: false,
-  mode: false,
-  price: false,
-  more: false
-}
-
-// FilterPicker 和 FilterMore 组件的选中值
-const selectedValues = {
-  area: ['area', 'null'],
-  mode: ['null'],
-  price: ['null'],
-  more: []
-}
-
 export default class Filter extends Component {
-  state = {
-    titleSelectedStatus,
-    // 控制 FilterPicker 或 FilterMore 组件的展示或隐藏
-    openType: '',
-    // 所有筛选条件数据
-    filtersData: {}
-  }
-
-  componentDidMount() {
-    this.getFiltersData()
-  }
-
-  // 封装获取所有筛选条件的方法
-  async getFiltersData() {
-    // 获取当前定位城市id
-    const { value } = await getCurrentCity();
-    const res = await API.get(`/houses/condition?id=${value}`)
-    this.setState({
-      filtersData: res.body
-    })
-  }
-
-  // 点击标题菜单实现高亮
-  // 注意：this指向的问题！！！
-  // 说明：要实现完整的功能，需要后续的组件配合完成！
-  onTitleClick = type => {
-    this.setState(prevState => {
-      return {
-        titleSelectedStatus: {
-          // 获取当前对象中所有属性的值
-          ...prevState.titleSelectedStatus,
-          [type]: true
+    state = {
+        // 筛选下拉高亮对应属性。
+        titleSlectedStatus: {
+            area: false,
+            mode: false,
+            price: false,
+            more: false
         },
-
-        // 展示对话框
-        openType: type
-      }
-    })
-  }
-
-  // 取消（隐藏对话框）
-  onCancel = () => {
-    // 隐藏对话框
-    this.setState({
-      openType: ''
-    })
-  }
-
-  // 确定（隐藏对话框）
-  onSave = (type, value) => {
-    console.log(type, value)
-    // 隐藏对话框
-    this.setState({
-      openType: ''
-    })
-  }
-
-  // 渲染 FilterPicker 组件的方法
-  renderFilterPicker() {
-    const {
-      openType,
-      filtersData: { area, subway, rentType, price }
-    } = this.state
-
-    if (openType !== 'area' && openType !== 'mode' && openType !== 'price') {
-      return null
+        selectedValues: {
+            area: ['area', 'null'],
+            mode: ['null'],
+            price: ['null'],
+            more: []
+        },
+        openType: '',
+        filterData: null
     }
 
-    // 根据 openType 来拿到当前筛选条件数据
-    let data = []
-    let cols = 3
-    switch (openType) {
-      case 'area':
-        // 获取到区域数据
-        data = [area, subway]
-        cols = 3
-        break
-      case 'mode':
-        data = rentType
-        cols = 1
-        break
-      case 'price':
-        data = price
-        cols = 1
-        break
-      default:
-        break
+    async getFilterData() {
+        const { value } = await getCurrentCity();
+        const { body: res } = await API.get('/houses/condition?id=' + value);
+        this.setState({
+            filterData: res
+        }, () => console.log(res));
     }
 
-    return (
-      <FilterPicker
-        onCancel={this.onCancel}
-        onSave={this.onSave}
-        data={data}
-        cols={cols}
-        type={openType}
-      />
-    )
-  }
+    get defaultValue() {
+        const { selectedValues, openType } = this.state;
+        return selectedValues[openType];
+    }
 
-  render() {
-    const { titleSelectedStatus, openType } = this.state
+    set defaultValue(value) {
+        const { selectedValues, openType } = this.state;
 
-    return (
-      <div className={styles.root}>
-        {/* 前三个菜单的遮罩层 */}
-        {openType === 'area' || openType === 'mode' || openType === 'price' ? (
-          <div className={styles.mask} onClick={this.onCancel} />
-        ) : null}
+        this.setState({
+            selectedValues: {
+                ...selectedValues,
+                [openType]: value
+            },
+            openType: ''
+        }, () => {
+            console.log(this.state);
+            this.generateFilterParams();
+            this.titleClickHandler('');
+        });
+    }
 
-        <div className={styles.content}>
-          {/* 标题栏 */}
-          <FilterTitle
-            titleSelectedStatus={titleSelectedStatus}
-            onClick={this.onTitleClick}
-          />
+    get showPicker() {
+        const { openType } = this.state;
+        // return openType === 'area' || openType === 'mode' || openType === 'price';
+        return ['area', 'mode', 'price'].includes(openType);
+    }
 
-          {/* 前三个菜单对应的内容： */}
-          {this.renderFilterPicker()}
+    generateFilterParams() {
+        const { area, mode, price, more } = this.state.selectedValues
 
-          {/* 最后一个菜单对应的内容： */}
-          {/* <FilterMore /> */}
-        </div>
-      </div>
-    )
-  }
+        const filters = {
+            [area[0]]: area.length === 3 ? area[2] === 'null' ? area[1] : area[2] : 'null',
+            rentType: mode[0],
+            price: price[0],
+            more: more.join(',')
+        }
+
+        this.props.onFilter(filters);
+    }
+
+    onCancel() {
+        this.titleClickHandler('');
+    }
+
+    onSave(data) {
+        this.defaultValue = data;
+    }
+
+    /**
+     * @param {String} type 对应选中下拉高亮的键名。
+     */
+    titleClickHandler(type) {
+        const { titleSlectedStatus: status, selectedValues: values } = this.state;
+
+        const newStatus = { ...status };
+
+        for (const key in status) {
+            if (key === type) {
+                newStatus[key] = true;
+            } else {
+                switch (key) {
+                    case 'area':
+                        newStatus[key] = !(values[key][0] === 'area' && values[key][1] === 'null');
+                        break;
+                    case 'mode': case 'price':
+                        newStatus[key] = values[key][0] !== 'null';
+                        break;
+                    case 'more':
+                        newStatus[key] = values[key].length > 0;
+                        break;
+                    default:
+                        break;
+                }
+            }
+        }
+
+        this.setState({
+            titleSlectedStatus: newStatus,
+            openType: type
+        })
+    }
+
+    componentDidMount() {
+        // 获取所有筛选条件的数据。
+        this.getFilterData();
+        console.log(this.state.openType);
+    }
+
+    componentDidUpdate() {
+        document.querySelector('.am-tab-bar').style.display = this.state.openType ? 'none' : 'block';
+        document.querySelector('body').style.overflow = this.state.openType ? 'hidden' : 'auto';
+    }
+
+    renderFilterPicker() {
+        if (this.showPicker) {
+            const { openType, filterData: { area, subway, rentType, price } } = this.state;
+
+            let data, columns = 1;
+
+            switch (openType) {
+                case 'area':
+                    data = [area, subway]
+                    columns = 3;
+                    break;
+                case 'mode':
+                    data = rentType;
+                    break;
+                case 'price':
+                    data = price;
+                    break;
+                default:
+                    data = [];
+                    break;
+            }
+            return <FilterPicker onCancel={this.onCancel.bind(this)} onSave={this.onSave.bind(this)} data={data} defaultValue={this.defaultValue} columns={columns} />
+        }
+        return null;
+    }
+
+    renderFilterMore() {
+        const { openType, selectedValues: { more } } = this.state
+        if (openType === 'more') {
+            const { filterData: { roomType, oriented, floor, characteristic } } = this.state;
+
+            const data = { roomType, oriented, floor, characteristic };
+
+            return <FilterMore data={data} values={more} onSave={this.onSave.bind(this)} onCancel={this.onCancel.bind(this)} />
+        }
+    }
+
+    render() {
+        const { titleSlectedStatus } = this.state;
+
+        return (
+            <div className={styles.root}>
+                {/* 前三个菜单的遮罩层 */}
+                {/* <div className={styles.mask} /> */}
+                {this.showPicker && (
+                        props => <div style={props} className={styles.mask} onClick={this.onCancel.bind(this)} />
+                )}
+
+
+
+                <div className={styles.content}>
+                    {/* 标题栏 */}
+                    <FilterTitle titleSlectedStatus={titleSlectedStatus} onTitleClick={this.titleClickHandler.bind(this)} />
+
+                    {/* 前三个菜单对应的内容： */}
+                    {/* <FilterPicker /> */}
+
+                    {this.renderFilterPicker()}
+
+                    {/* 最后一个菜单对应的内容： */}
+                    {/* <FilterMore /> */}
+                    {this.renderFilterMore()}
+                </div>
+            </div>
+        )
+    }
 }
